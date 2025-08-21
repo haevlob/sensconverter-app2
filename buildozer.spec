@@ -22,7 +22,7 @@ version = 1.0
 requirements = python3==3.10.13,hostpython3==3.10.13,kivy==2.3.0,cython==0.29.36
 
 # (str) Icon of the application
-icon.filename = %(source.dir)s/IMG_20250817_185747.png
+# icon.filename = %(source.dir)s/IMG_20250817_185747.png
 
 # (list) Supported orientations
 orientation = portrait
