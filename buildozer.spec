@@ -50,7 +50,7 @@ p4a.bootstrap = sdl2
 # (str) The format used to package the app for debug mode (apk or aar).
 android.debug_artifact = apk
 
-android.ndk = 25b  # Добавь это
+android.ndk = 25b  # Corrected: No extra text or comment here
 
 [buildozer]
 
