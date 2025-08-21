@@ -1,40 +1,22 @@
 name: Build Android APK
 
-on: [push]  # Срабатывает при пушах в репозиторий
+on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04  # Оставляем ubuntu-22.04, она стабильная для Kivy
-
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4  # Скачиваем код из репозитория
+    - uses: actions/checkout@v4
+    - name: Build with Buildozer
+      uses: ArtemSBulgakov/buildozer-action@v1.1.3  # Готовый action для Buildozer
+      id: buildozer
+      with:
+        command: buildozer android debug
+        workdir: .
+        buildozer_version: stable  # Или master для последней версии
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'  # Python 3.10, как в твоём spec
-
-      - name: Set up JDK 17  # Новый шаг: Устанавливаем Java 17 правильно (это фиксит Gradle)
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'  # Temurin — надёжный дистрибутив JDK
-          java-version: '17'  # Обязательно 17 для Gradle
-
-      - name: Install dependencies  # Установка зависимостей (убрали openjdk-17, т.к. setup-java сделал это)
-        run: |
-          sudo apt update
-          sudo apt install -y zip unzip python3-pip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev libjpeg-dev libpng-dev libltdl-dev
-          pip install --upgrade pip
-          pip install buildozer==1.5.0  # Только buildozer, kivy и cython не нужны — buildozer их подтянет
-
-      - name: Clear Buildozer cache  # Чистим кэш, чтобы избежать старых ошибок
-        run: rm -rf .buildozer
-
-      - name: Build APK  # Сборка APK (с -v для verbose логов)
-        run: buildozer -v android debug
-
-      - name: Upload APK  # Загружаем APK как артефакт (скачаешь в Actions на GitHub)
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk
-          path: bin/*.apk
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: package
+        path: ${{ steps.buildozer.outputs.filename }}
