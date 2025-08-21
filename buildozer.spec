@@ -52,7 +52,7 @@ android.debug_artifact = apk
 
 android.ndk = 25b
 
-android.archs = arm64-v8a  # Опционально, для упрощения
+android.archs = arm64-v8a
 
 [buildozer]
 
