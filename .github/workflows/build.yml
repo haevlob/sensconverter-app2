@@ -1,36 +1,39 @@
 name: Build Android APK
 
-on: [push]
+on: [push]  # Срабатывает при пушах в репозиторий
 
 jobs:
   build:
-    runs-on: ubuntu-22.04  # Стабильная версия
+    runs-on: ubuntu-22.04  # Оставляем ubuntu-22.04, она стабильная для Kivy
+
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4  # Скачиваем код из репозитория
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'  # Стабильная для Kivy
+          python-version: '3.10'  # Python 3.10, как в твоём spec
 
-      - name: Install dependencies
+      - name: Set up JDK 17  # Новый шаг: Устанавливаем Java 17 правильно (это фиксит Gradle)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'  # Temurin — надёжный дистрибутив JDK
+          java-version: '17'  # Обязательно 17 для Gradle
+
+      - name: Install dependencies  # Установка зависимостей (убрали openjdk-17, т.к. setup-java сделал это)
         run: |
           sudo apt update
-          sudo apt install -y openjdk-17-jdk zip unzip python3-pip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev libjpeg-dev libpng-dev libltdl-dev
-          sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
-          sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac
-          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-          export PATH=$JAVA_HOME/bin:$PATH
+          sudo apt install -y zip unzip python3-pip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev libjpeg-dev libpng-dev libltdl-dev
           pip install --upgrade pip
-          pip install buildozer==1.5.0 cython==0.29.36 kivy==2.3.0
+          pip install buildozer==1.5.0  # Только buildozer, kivy и cython не нужны — buildozer их подтянет
 
-      - name: Clear Buildozer cache
+      - name: Clear Buildozer cache  # Чистим кэш, чтобы избежать старых ошибок
         run: rm -rf .buildozer
 
-      - name: Build APK
+      - name: Build APK  # Сборка APK (с -v для verbose логов)
         run: buildozer -v android debug
 
-      - name: Upload APK
+      - name: Upload APK  # Загружаем APK как артефакт (скачаешь в Actions на GitHub)
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
