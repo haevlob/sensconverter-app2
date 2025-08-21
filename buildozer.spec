@@ -19,7 +19,7 @@ source.include_exts = py,png,jpg,kv,atlas
 version = 1.0
 
 # (list) Application requirements
-requirements = python3,kivy==2.3.0,cython==0.29.36
+requirements = python3==3.10.13,hostpython3==3.10.13,kivy==2.3.0,cython==0.29.36
 
 # (str) Icon of the application
 icon.filename = %(source.dir)s/IMG_20250817_185747.png
@@ -51,6 +51,8 @@ p4a.bootstrap = sdl2
 android.debug_artifact = apk
 
 android.ndk = 25b
+
+android.archs = arm64-v8a  # Опционально, для упрощения
 
 [buildozer]
 
