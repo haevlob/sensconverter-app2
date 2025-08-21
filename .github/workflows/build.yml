@@ -1,22 +1,40 @@
 name: Build Android APK
 
-on: [push]
+on: [push]  # Срабатывает при пушах
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Build with Buildozer
-      uses: ArtemSBulgakov/buildozer-action@v1.1.3  # Готовый action для Buildozer
-      id: buildozer
-      with:
-        command: buildozer android debug
-        workdir: .
-        buildozer_version: stable  # Или master для последней версии
+    runs-on: ubuntu-22.04  # Стабильная версия
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: package
-        path: ${{ steps.buildozer.outputs.filename }}
+    steps:
+      - uses: actions/checkout@v4  # Скачиваем код
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'  # Python 3.10, как в spec
+
+      - name: Set up JDK 17  # Java 17 для Gradle
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install dependencies  # Установка зависимостей, добавили cython и kivy
+        run: |
+          sudo apt update
+          sudo apt install -y zip unzip python3-pip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev libjpeg-dev libpng-dev libltdl-dev
+          pip install --upgrade pip
+          pip install buildozer==1.5.0 cython==0.29.36 kivy==2.3.0  # Добавили cython и kivy для предустановки
+
+      - name: Clear Buildozer cache  # Чистим кэш
+        run: rm -rf .buildozer
+
+      - name: Build APK  # Сборка с verbose логами
+        run: buildozer -v android debug
+
+      - name: Upload APK  # Загружаем APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: bin/*.apk
