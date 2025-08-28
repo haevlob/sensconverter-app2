@@ -22,13 +22,208 @@ class SensitivityConverter(BoxLayout):
     pubg_accel = BooleanProperty(False)
     standoff_accel = NumericProperty(0.0)
     cod_accel = NumericProperty(0)
+    language = StringProperty('ru')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.translations = {
+            'from_game': {
+                'ru': 'Из игры',
+                'en': 'From game',
+                'es': 'De juego',
+                'pt': 'Do jogo',
+                'ja': 'ゲームから',
+                'zh': '从游戏',
+                'ar': 'من اللعبة'
+            },
+            'to_game': {
+                'ru': 'В игру',
+                'en': 'To game',
+                'es': 'A juego',
+                'pt': 'Para jogo',
+                'ja': 'ゲームへ',
+                'zh': '到游戏',
+                'ar': 'إلى اللعبة'
+            },
+            'accel_title': {
+                'ru': 'Ускорение проведения по горизонтали',
+                'en': 'Horizontal swipe acceleration',
+                'es': 'Aceleración de deslizamiento horizontal',
+                'pt': 'Aceleração de deslize horizontal',
+                'ja': '水平スワイプ加速',
+                'zh': '水平滑动加速',
+                'ar': 'تسارع السحب الأفقي'
+            },
+            'mode': {
+                'ru': 'Режим:',
+                'en': 'Mode:',
+                'es': 'Modo:',
+                'pt': 'Modo:',
+                'ja': 'モード:',
+                'zh': '模式:',
+                'ar': 'الوضع:'
+            },
+            'auto': {
+                'ru': 'Автоматически',
+                'en': 'Automatically',
+                'es': 'Automáticamente',
+                'pt': 'Automaticamente',
+                'ja': '自動的に',
+                'zh': '自动',
+                'ar': 'تلقائيا'
+            },
+            'manual': {
+                'ru': 'Вручную',
+                'en': 'Manually',
+                'es': 'Manualmente',
+                'pt': 'Manualmente',
+                'ja': '手動で',
+                'zh': '手动',
+                'ar': 'يدويا'
+            },
+            'type': {
+                'ru': 'Тип:',
+                'en': 'Type:',
+                'es': 'Tipo:',
+                'pt': 'Tipo:',
+                'ja': 'タイプ:',
+                'zh': '类型:',
+                'ar': 'النوع:'
+            },
+            'sens': {
+                'ru': 'Сенса',
+                'en': 'Sens',
+                'es': 'Sens',
+                'pt': 'Sens',
+                'ja': 'Sens',
+                'zh': 'Sens',
+                'ar': 'Sens'
+            },
+            'gyro': {
+                'ru': 'Гироскоп',
+                'en': 'Gyroscope',
+                'es': 'Giroscopio',
+                'pt': 'Giroscópio',
+                'ja': 'ジャイロスコープ',
+                'zh': '陀螺仪',
+                'ar': 'جيروسكوب'
+            },
+            'same_games': {
+                'ru': 'Выберите разные игры для конвертации',
+                'en': 'Select different games for conversion',
+                'es': 'Seleccione juegos diferentes para la conversión',
+                'pt': 'Selecione jogos diferentes para conversão',
+                'ja': '変換のために異なるゲームを選択してください',
+                'zh': '选择不同的游戏进行转换',
+                'ar': 'اختر ألعاب مختلفة للتحويل'
+            },
+            'general_sens': {
+                'ru': 'Общ. чувс.',
+                'en': 'General sens.',
+                'es': 'Sens. general',
+                'pt': 'Sens. geral',
+                'ja': '一般感度',
+                'zh': '一般敏感度',
+                'ar': 'الحساسية العامة'
+            },
+            '3person': {
+                'ru': '3 лицо',
+                'en': '3rd person',
+                'es': '3ra persona',
+                'pt': '3ª pessoa',
+                'ja': '三人称',
+                'zh': '第三人称',
+                'ar': 'الشخص الثالث'
+            },
+            '1person': {
+                'ru': '1 лицо',
+                'en': '1st person',
+                'es': '1ra persona',
+                'pt': '1ª pessoa',
+                'ja': '一人称',
+                'zh': '第一人称',
+                'ar': 'الشخص الأول'
+            },
+            'col_holo_iron_side': {
+                'ru': 'Кол., голо.,\nмушка, боковой',
+                'en': 'Col., holo.,\niron sight, side',
+                'es': 'Col., holo.,\nmira hierro, lateral',
+                'pt': 'Col., holo.,\nmira ferro, lateral',
+                'ja': 'コリメーター, ホロ,\nアイアンサイト, サイド',
+                'zh': '准直, 全息,\n铁瞄, 侧',
+                'ar': 'كوليماتور, هولو,\nحديدي, جانبي'
+            },
+            'in_scope': {
+                'ru': 'В прицеле',
+                'en': 'In scope',
+                'es': 'En mira',
+                'pt': 'Em mira',
+                'ja': 'スコープ内',
+                'zh': '在瞄准镜',
+                'ar': 'في النطاق'
+            },
+            '3person_dot': {
+                'ru': '3 лицо.',
+                'en': '3rd person.',
+                'es': '3ra persona.',
+                'pt': '3ª pessoa.',
+                'ja': '三人称.',
+                'zh': '第三人称.',
+                'ar': 'الشخص الثالث.'
+            },
+            'standard': {
+                'ru': 'Стандарт',
+                'en': 'Standard',
+                'es': 'Estándar',
+                'pt': 'Padrão',
+                'ja': '標準',
+                'zh': '标准',
+                'ar': 'قياسي'
+            },
+            'col_holo_aim': {
+                'ru': 'Кол., голо.,\nв реж. прицел.',
+                'en': 'Col., holo.,\nin aim mode',
+                'es': 'Col., holo.,\nen modo mira',
+                'pt': 'Col., holo.,\nem modo mira',
+                'ja': 'コリメーター, ホロ,\nエイムモード',
+                'zh': '准直, 全息,\n在瞄准模式',
+                'ar': 'كوليماتور, هولو,\nفي وضع التصويب'
+            },
+            'tactical': {
+                'ru': 'Тактический',
+                'en': 'Tactical',
+                'es': 'Táctico',
+                'pt': 'Tático',
+                'ja': 'タクティカル',
+                'zh': '战术',
+                'ar': 'تكتيكي'
+            },
+            'sniper': {
+                'ru': 'Снайперский',
+                'en': 'Sniper',
+                'es': 'Francotirador',
+                'pt': 'Sniper',
+                'ja': 'スナイパー',
+                'zh': '狙击',
+                'ar': 'قناص'
+            }
+        }
+        self.langs = {
+            'ru': 'Русский',
+            'en': 'English',
+            'es': 'Español',
+            'pt': 'Português (BR)',
+            'ja': '日本語',
+            'zh': '中文',
+            'ar': 'العربية'
+        }
         self.setup_conversion_data()
         self.entry_widgets = []
         self.left_widgets = []
         self.create_widgets()
+
+    def get_text(self, key):
+        return self.translations.get(key, {}).get(self.language, key)
 
     def setup_conversion_data(self):
         # Таблица для сенсы между Standoff 2 и PUBG
@@ -114,14 +309,27 @@ class SensitivityConverter(BoxLayout):
         }
 
     def create_widgets(self):
+        lang_frame = BoxLayout(orientation='horizontal', size_hint_y=None, height=dp(44))
+        self.add_widget(lang_frame)
+        lang_label = Label(text="Language:", size_hint_x=None, width=dp(100))
+        lang_frame.add_widget(lang_label)
+        self.lang_spinner = Spinner(
+            text=self.langs['ru'],
+            values=list(self.langs.values()),
+            size_hint_y=None,
+            height=dp(44)
+        )
+        self.lang_spinner.bind(text=self.on_lang_change)
+        lang_frame.add_widget(self.lang_spinner)
+
         top_frame = BoxLayout(orientation='horizontal', size_hint_y=None, height=dp(120))
         self.add_widget(top_frame)
 
         left_game_frame = BoxLayout(orientation='vertical')
         top_frame.add_widget(left_game_frame)
-        left_title = Label(text="Из игры", size_hint_y=None, height=dp(30), halign='center', valign='middle')
-        left_title.bind(size=left_title.setter('text_size'))
-        left_game_frame.add_widget(left_title)
+        self.left_title = Label(text=self.get_text("from_game"), size_hint_y=None, height=dp(30), halign='center', valign='middle')
+        self.left_title.bind(size=self.left_title.setter('text_size'))
+        left_game_frame.add_widget(self.left_title)
 
         games = {'Standoff 2': 'standoff', 'PUBG Mobile': 'pubg', 'CoD Mobile': 'cod'}
         self.left_spinner = Spinner(
@@ -135,9 +343,9 @@ class SensitivityConverter(BoxLayout):
 
         right_game_frame = BoxLayout(orientation='vertical')
         top_frame.add_widget(right_game_frame)
-        right_title = Label(text="В игру", size_hint_y=None, height=dp(30), halign='center', valign='middle')
-        right_title.bind(size=right_title.setter('text_size'))
-        right_game_frame.add_widget(right_title)
+        self.right_title = Label(text=self.get_text("to_game"), size_hint_y=None, height=dp(30), halign='center', valign='middle')
+        self.right_title.bind(size=self.right_title.setter('text_size'))
+        right_game_frame.add_widget(self.right_title)
 
         self.right_spinner = Spinner(
             text='CoD Mobile',
@@ -150,7 +358,8 @@ class SensitivityConverter(BoxLayout):
 
         accel_frame = BoxLayout(orientation='vertical', size_hint_y=None, height=dp(60))
         self.add_widget(accel_frame)
-        accel_frame.add_widget(Label(text="Ускорение проведения по горизонтали", size_hint_y=None, height=dp(30)))
+        self.accel_title = Label(text=self.get_text("accel_title"), size_hint_y=None, height=dp(30))
+                accel_frame.add_widget(self.accel_title)
         self.accel_inner_frame = BoxLayout(orientation='horizontal')
         accel_frame.add_widget(self.accel_inner_frame)
 
@@ -159,10 +368,11 @@ class SensitivityConverter(BoxLayout):
 
         mode_frame = BoxLayout(orientation='horizontal', size_hint_y=None, height=dp(60))
         settings_frame.add_widget(mode_frame)
-        mode_frame.add_widget(Label(text="Режим:", size_hint_x=None, width=dp(60)))
+        self.mode_label = Label(text=self.get_text("mode"), size_hint_x=None, width=dp(60))
+        mode_frame.add_widget(self.mode_label)
         self.mode_buttons = {}
-        for mode, text in [('auto', 'Автоматически'), ('manual', 'Вручную')]:
-            btn = ToggleButton(text=text, group='mode', state='down' if mode == 'auto' else 'normal')
+        for mode, text_key in [('auto', 'auto'), ('manual', 'manual')]:
+            btn = ToggleButton(text=self.get_text(text_key), group='mode', state='down' if mode == 'auto' else 'normal')
             btn.mode_id = mode
             btn.bind(state=self.on_mode_change)
             mode_frame.add_widget(btn)
@@ -170,10 +380,11 @@ class SensitivityConverter(BoxLayout):
 
         sensor_frame = BoxLayout(orientation='horizontal', size_hint_y=None, height=dp(60))
         settings_frame.add_widget(sensor_frame)
-        sensor_frame.add_widget(Label(text="Тип:", size_hint_x=None, width=dp(60)))
+        self.type_label = Label(text=self.get_text("type"), size_hint_x=None, width=dp(60))
+        sensor_frame.add_widget(self.type_label)
         self.sensor_buttons = {}
-        for sensor, text in [('sensitivity', 'Сенса'), ('gyroscope', 'Гироскоп')]:
-            btn = ToggleButton(text=text, group='sensor', state='down' if sensor == 'sensitivity' else 'normal')
+        for sensor, text_key in [('sensitivity', 'sens'), ('gyroscope', 'gyro')]:
+            btn = ToggleButton(text=self.get_text(text_key), group='sensor', state='down' if sensor == 'sensitivity' else 'normal')
             btn.sensor_id = sensor
             btn.bind(state=self.on_sensor_change)
             sensor_frame.add_widget(btn)
@@ -185,6 +396,25 @@ class SensitivityConverter(BoxLayout):
         self.table_frame.bind(minimum_height=self.table_frame.setter('height'))
         self.table_scroll.add_widget(self.table_frame)
 
+        self.update_ui()
+
+    def on_lang_change(self, instance, value):
+        for code, name in self.langs.items():
+            if name == value:
+                self.language = code
+                break
+        self.update_texts()
+
+    def update_texts(self):
+        self.left_title.text = self.get_text('from_game')
+        self.right_title.text = self.get_text('to_game')
+        self.accel_title.text = self.get_text('accel_title')
+        self.mode_label.text = self.get_text('mode')
+        self.type_label.text = self.get_text('type')
+        for mode, btn in self.mode_buttons.items():
+            btn.text = self.get_text(mode)
+        for sensor, btn in self.sensor_buttons.items():
+            btn.text = self.get_text('sens' if sensor == 'sensitivity' else 'gyro')
         self.update_ui()
 
     def on_left_game_change(self, value):
@@ -385,19 +615,19 @@ class SensitivityConverter(BoxLayout):
         sensor = self.sensor_type
 
         if left_game == right_game:
-            self.table_frame.add_widget(Label(text="Выберите разные игры для конвертации"))
+            self.table_frame.add_widget(Label(text=self.get_text("same_games")))
             return
 
         rows = [
-            ("Общ. чувс.", "3 лицо", "3 лицо.", "general_3p"),
-            ("", "1 лицо", "Стандарт", "general_1p"),
-            ("", "Кол., голо.,\nмушка, боковой", "Кол., голо.,\nв реж. прицел.", "col"),
-            ("", "2x", "Тактический", "2x"),
-            ("В прицеле", "3x", "3x", "3x"),
+            (self.get_text("general_sens"), self.get_text("3person"), self.get_text("3person_dot"), "general_3p"),
+            ("", self.get_text("1person"), self.get_text("standard"), "general_1p"),
+            ("", self.get_text("col_holo_iron_side"), self.get_text("col_holo_aim"), "col"),
+            ("", "2x", self.get_text("tactical"), "2x"),
+            (self.get_text("in_scope"), "3x", "3x", "3x"),
             ("", "4x", "4x", "4x"),
             ("", "6x", "6x", "6x"),
             ("", "8x", "8x", "8x"),
-            ("", "", "Снайперский", "6x_sniper")
+            ("", "", self.get_text("sniper"), "6x_sniper")
         ]
 
         for standoff_label, pubg_label, cod_label, key in rows:
@@ -420,22 +650,22 @@ class SensitivityConverter(BoxLayout):
                     elif mode == "manual" and key in ["general_3p", "3x"] and left_label_text:
                         state = False
                 elif left_game == "pubg" and right_game == "standoff":
-                    if mode == "auto" and key == "general_3p" and left_label_text == "3 лицо":
+                    if mode == "auto" and key == "general_3p" and left_label_text == self.get_text("3person"):
                         state = False
-                    elif mode == "manual" and key in ["general_3p", "3x"] and left_label_text in ["3 лицо", "3x"]:
+                    elif mode == "manual" and key in ["general_3p", "3x"] and left_label_text in [self.get_text("3person"), "3x"]:
                         state = False
                 elif left_game == "pubg" and right_game == "cod":
-                    if mode == "auto" and key == "general_3p" and left_label_text == "3 лицо":
+                    if mode == "auto" and key == "general_3p" and left_label_text == self.get_text("3person"):
                         state = False
                     elif mode == "manual" and key in ["general_3p", "general_1p", "col", "2x", "3x", "4x", "6x", "8x"] and left_label_text:
                         state = False
                 elif left_game == "cod" and right_game == "standoff":
-                    if mode == "auto" and key == "general_3p" and left_label_text == "3 лицо.":
+                    if mode == "auto" and key == "general_3p" and left_label_text == self.get_text("3person_dot"):
                         state = False
-                    elif mode == "manual" and key in ["general_3p", "3x"] and left_label_text in ["3 лицо.", "3x"]:
+                    elif mode == "manual" and key in ["general_3p", "3x"] and left_label_text in [self.get_text("3person_dot"), "3x"]:
                         state = False
                 elif left_game == "cod" and right_game == "pubg":
-                    if mode == "auto" and key == "general_3p" and left_label_text == "3 лицо.":
+                    if mode == "auto" and key == "general_3p" and left_label_text == self.get_text("3person_dot"):
                         state = False
                     elif mode == "manual" and key in ["general_3p", "general_1p", "col", "2x", "3x", "4x", "6x", "8x"] and left_label_text:  # Removed "6x_sniper" to make it readonly
                         state = False
@@ -469,7 +699,7 @@ class SensitivityConverter(BoxLayout):
 
     def on_auto_text_change(self, key, right_input, left_input, instance, value):
         Clock.schedule_once(partial(self.update_auto_conversion, key, right_input, left_input, value), 0)
-
+        
     def on_manual_text_change(self, key, right_input, left_input, left_label, instance, value):
         Clock.schedule_once(partial(self.update_manual_conversion, key, right_input, left_input, left_label, value), 0)
 
