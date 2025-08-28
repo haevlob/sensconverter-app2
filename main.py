@@ -359,7 +359,7 @@ class SensitivityConverter(BoxLayout):
         accel_frame = BoxLayout(orientation='vertical', size_hint_y=None, height=dp(60))
         self.add_widget(accel_frame)
         self.accel_title = Label(text=self.get_text("accel_title"), size_hint_y=None, height=dp(30))
-                accel_frame.add_widget(self.accel_title)
+        accel_frame.add_widget(self.accel_title)
         self.accel_inner_frame = BoxLayout(orientation='horizontal')
         accel_frame.add_widget(self.accel_inner_frame)
 
