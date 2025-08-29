@@ -12,6 +12,13 @@ from kivy.clock import Clock
 from kivy.metrics import dp
 from kivy.core.window import Window
 from functools import partial
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.button import Button
+from kivy.animation import Animation
+from kivy.uix.accordion import Accordion, AccordionItem
+from kivy.uix.widget import Widget
+from kivy.graphics import Color, Rectangle
+import types
 
 class SensitivityConverter(BoxLayout):
     orientation = 'vertical'
@@ -31,191 +38,146 @@ class SensitivityConverter(BoxLayout):
                 'ru': 'Из игры',
                 'en': 'From game',
                 'es': 'De juego',
-                'pt': 'Do jogo',
-                'ja': 'ゲームから',
-                'zh': '从游戏',
-                'ar': 'من اللعبة'
+                'pt': 'Do jogo'
             },
             'to_game': {
                 'ru': 'В игру',
                 'en': 'To game',
                 'es': 'A juego',
-                'pt': 'Para jogo',
-                'ja': 'ゲームへ',
-                'zh': '到游戏',
-                'ar': 'إلى اللعبة'
+                'pt': 'Para jogo'
             },
             'accel_title': {
                 'ru': 'Ускорение проведения по горизонтали',
                 'en': 'Horizontal swipe acceleration',
                 'es': 'Aceleración de deslizamiento horizontal',
-                'pt': 'Aceleração de deslize horizontal',
-                'ja': '水平スワイプ加速',
-                'zh': '水平滑动加速',
-                'ar': 'تسارع السحب الأفقي'
+                'pt': 'Aceleração de deslize horizontal'
             },
             'mode': {
                 'ru': 'Режим:',
                 'en': 'Mode:',
                 'es': 'Modo:',
-                'pt': 'Modo:',
-                'ja': 'モード:',
-                'zh': '模式:',
-                'ar': 'الوضع:'
+                'pt': 'Modo:'
             },
             'auto': {
                 'ru': 'Автоматически',
                 'en': 'Automatically',
                 'es': 'Automáticamente',
-                'pt': 'Automaticamente',
-                'ja': '自動的に',
-                'zh': '自动',
-                'ar': 'تلقائيا'
+                'pt': 'Automaticamente'
             },
             'manual': {
                 'ru': 'Вручную',
                 'en': 'Manually',
                 'es': 'Manualmente',
-                'pt': 'Manualmente',
-                'ja': '手動で',
-                'zh': '手动',
-                'ar': 'يدويا'
+                'pt': 'Manualmente'
             },
             'type': {
                 'ru': 'Тип:',
                 'en': 'Type:',
                 'es': 'Tipo:',
-                'pt': 'Tipo:',
-                'ja': 'タイプ:',
-                'zh': '类型:',
-                'ar': 'النوع:'
+                'pt': 'Tipo:'
             },
             'sens': {
                 'ru': 'Сенса',
                 'en': 'Sens',
                 'es': 'Sens',
-                'pt': 'Sens',
-                'ja': 'Sens',
-                'zh': 'Sens',
-                'ar': 'Sens'
+                'pt': 'Sens'
             },
             'gyro': {
                 'ru': 'Гироскоп',
                 'en': 'Gyroscope',
                 'es': 'Giroscopio',
-                'pt': 'Giroscópio',
-                'ja': 'ジャイロスコープ',
-                'zh': '陀螺仪',
-                'ar': 'جيروسكوب'
+                'pt': 'Giroscópio'
             },
             'same_games': {
                 'ru': 'Выберите разные игры для конвертации',
                 'en': 'Select different games for conversion',
                 'es': 'Seleccione juegos diferentes para la conversión',
-                'pt': 'Selecione jogos diferentes para conversão',
-                'ja': '変換のために異なるゲームを選択してください',
-                'zh': '选择不同的游戏进行转换',
-                'ar': 'اختر ألعاب مختلفة للتحويل'
+                'pt': 'Selecione jogos diferentes para conversão'
             },
             'general_sens': {
                 'ru': 'Общ. чувс.',
                 'en': 'General sens.',
                 'es': 'Sens. general',
-                'pt': 'Sens. geral',
-                'ja': '一般感度',
-                'zh': '一般敏感度',
-                'ar': 'الحساسية العامة'
+                'pt': 'Sens. geral'
             },
             '3person': {
                 'ru': '3 лицо',
                 'en': '3rd person',
                 'es': '3ra persona',
-                'pt': '3ª pessoa',
-                'ja': '三人称',
-                'zh': '第三人称',
-                'ar': 'الشخص الثالث'
+                'pt': '3ª pessoa'
             },
             '1person': {
                 'ru': '1 лицо',
                 'en': '1st person',
                 'es': '1ra persona',
-                'pt': '1ª pessoa',
-                'ja': '一人称',
-                'zh': '第一人称',
-                'ar': 'الشخص الأول'
+                'pt': '1ª pessoa'
             },
             'col_holo_iron_side': {
                 'ru': 'Кол., голо.,\nмушка, боковой',
                 'en': 'Col., holo.,\niron sight, side',
                 'es': 'Col., holo.,\nmira hierro, lateral',
-                'pt': 'Col., holo.,\nmira ferro, lateral',
-                'ja': 'コリメーター, ホロ,\nアイアンサイト, サイド',
-                'zh': '准直, 全息,\n铁瞄, 侧',
-                'ar': 'كوليماتور, هولو,\nحديدي, جانبي'
+                'pt': 'Col., holo.,\nmira ferro, lateral'
             },
             'in_scope': {
                 'ru': 'В прицеле',
                 'en': 'In scope',
                 'es': 'En mira',
-                'pt': 'Em mira',
-                'ja': 'スコープ内',
-                'zh': '在瞄准镜',
-                'ar': 'في النطاق'
+                'pt': 'Em mira'
             },
             '3person_dot': {
                 'ru': '3 лицо.',
                 'en': '3rd person.',
                 'es': '3ra persona.',
-                'pt': '3ª pessoa.',
-                'ja': '三人称.',
-                'zh': '第三人称.',
-                'ar': 'الشخص الثالث.'
+                'pt': '3ª pessoa.'
             },
             'standard': {
                 'ru': 'Стандарт',
                 'en': 'Standard',
                 'es': 'Estándar',
-                'pt': 'Padrão',
-                'ja': '標準',
-                'zh': '标准',
-                'ar': 'قياسي'
+                'pt': 'Padrão'
             },
             'col_holo_aim': {
                 'ru': 'Кол., голо.,\nв реж. прицел.',
                 'en': 'Col., holo.,\nin aim mode',
                 'es': 'Col., holo.,\nen modo mira',
-                'pt': 'Col., holo.,\nem modo mira',
-                'ja': 'コリメーター, ホロ,\nエイムモード',
-                'zh': '准直, 全息,\n在瞄准模式',
-                'ar': 'كوليماتور, هولو,\nفي وضع التصويب'
+                'pt': 'Col., holo.,\nem modo mira'
             },
             'tactical': {
                 'ru': 'Тактический',
                 'en': 'Tactical',
                 'es': 'Táctico',
-                'pt': 'Tático',
-                'ja': 'タクティカル',
-                'zh': '战术',
-                'ar': 'تكتيكي'
+                'pt': 'Tático'
             },
             'sniper': {
                 'ru': 'Снайперский',
                 'en': 'Sniper',
                 'es': 'Francotirador',
-                'pt': 'Sniper',
-                'ja': 'スナイパー',
-                'zh': '狙击',
-                'ar': 'قناص'
+                'pt': 'Sniper'
+            },
+            'settings': {
+                'ru': 'Настройки',
+                'en': 'Settings',
+                'es': 'Ajustes',
+                'pt': 'Configurações'
+            },
+            'language': {
+                'ru': 'Язык',
+                'en': 'Language',
+                'es': 'Idioma',
+                'pt': 'Idioma'
+            },
+            'menu': {
+                'ru': 'Меню',
+                'en': 'Menu',
+                'es': 'Menú',
+                'pt': 'Menu'
             }
         }
         self.langs = {
             'ru': 'Русский',
             'en': 'English',
             'es': 'Español',
-            'pt': 'Português (BR)',
-            'ja': '日本語',
-            'zh': '中文',
-            'ar': 'العربية'
+            'pt': 'Português (BR)'
         }
         self.setup_conversion_data()
         self.entry_widgets = []
@@ -309,19 +271,6 @@ class SensitivityConverter(BoxLayout):
         }
 
     def create_widgets(self):
-        lang_frame = BoxLayout(orientation='horizontal', size_hint_y=None, height=dp(44))
-        self.add_widget(lang_frame)
-        lang_label = Label(text="Language:", size_hint_x=None, width=dp(100))
-        lang_frame.add_widget(lang_label)
-        self.lang_spinner = Spinner(
-            text=self.langs['ru'],
-            values=list(self.langs.values()),
-            size_hint_y=None,
-            height=dp(44)
-        )
-        self.lang_spinner.bind(text=self.on_lang_change)
-        lang_frame.add_widget(self.lang_spinner)
-
         top_frame = BoxLayout(orientation='horizontal', size_hint_y=None, height=dp(120))
         self.add_widget(top_frame)
 
@@ -404,6 +353,7 @@ class SensitivityConverter(BoxLayout):
                 self.language = code
                 break
         self.update_texts()
+        App.get_running_app().update_menu_texts()
 
     def update_texts(self):
         self.left_title.text = self.get_text('from_game')
@@ -416,7 +366,7 @@ class SensitivityConverter(BoxLayout):
         for sensor, btn in self.sensor_buttons.items():
             btn.text = self.get_text('sens' if sensor == 'sensitivity' else 'gyro')
         self.update_ui()
-
+        
     def on_left_game_change(self, value):
         games = {'Standoff 2': 'standoff', 'PUBG Mobile': 'pubg', 'CoD Mobile': 'cod'}
         self.left_game = games[value]
@@ -699,7 +649,7 @@ class SensitivityConverter(BoxLayout):
 
     def on_auto_text_change(self, key, right_input, left_input, instance, value):
         Clock.schedule_once(partial(self.update_auto_conversion, key, right_input, left_input, value), 0)
-        
+
     def on_manual_text_change(self, key, right_input, left_input, left_label, instance, value):
         Clock.schedule_once(partial(self.update_manual_conversion, key, right_input, left_input, left_label, value), 0)
 
@@ -760,7 +710,7 @@ class SensitivityConverter(BoxLayout):
                     upper = source_data[k][list(source_data[k].keys())[row_index + 1]]
                     val = lower + ratio * (upper - lower)
                     ri.text = str(int(round(val)))
-
+                    
         elif left_game == "cod" and right_game == "pubg" and key == "general_3p":
             pubg_indices = {
                 "general_3p": 0, "general_1p": 1, "col": 2, "2x": 3, "3x": 4, "4x": 5, "6x": 6, "8x": 7
@@ -1050,7 +1000,90 @@ class SensitivityConverter(BoxLayout):
 class ConverterApp(App):
     def build(self):
         Window.fullscreen = 'auto'
-        return SensitivityConverter()
+        root = FloatLayout()
+        self.converter = SensitivityConverter(size_hint=(1, 1), pos=(0, 0))
+        root.add_widget(self.converter)
+
+        self.overlay = Widget(size_hint=(1, 1), opacity=0)
+        self.overlay.disabled = True
+        with self.overlay.canvas:
+            Color(rgba=(0, 0, 0, 0.5))
+            self.rect = Rectangle(pos=self.overlay.pos, size=self.overlay.size)
+        self.overlay.bind(pos=self.update_rect, size=self.update_rect)
+        self.overlay.bind(on_touch_down=self.on_overlay_touch_down)
+        def overlay_collide_point(widget, x, y):
+            if widget.opacity == 0 or widget.disabled:
+                return False
+            return widget.x <= x < widget.x + widget.width and widget.y <= y < widget.y + widget.height
+        self.overlay.collide_point = types.MethodType(overlay_collide_point, self.overlay)
+        root.add_widget(self.overlay)
+
+        self.menu = BoxLayout(orientation='vertical', size_hint=(None, None), size=(dp(250), Window.height), pos=(-dp(250), 0))
+        root.add_widget(self.menu)
+
+        self.menu_btn = Button(text='☰', font_size=dp(24), size_hint=(None, None), size=(dp(40), dp(40)), pos=(dp(10), Window.height - dp(50)))
+        self.menu_btn.bind(on_press=self.open_menu)
+        root.add_widget(self.menu_btn)
+
+        self.build_menu()
+        Window.bind(size=self.on_window_resize)
+        return root
+
+    def update_rect(self, instance, value):
+        self.rect.pos = instance.pos
+        self.rect.size = instance.size
+
+    def on_overlay_touch_down(self, instance, touch):
+        if self.menu.collide_point(*touch.pos):
+            return False
+        self.close_menu()
+        return True
+
+    def on_window_resize(self, instance, value):
+        self.menu.height = Window.height
+        self.menu.pos = (0 if self.menu.x >= 0 else -self.menu.width, 0)
+        self.menu_btn.pos = (dp(10), Window.height - dp(50))
+
+    def build_menu(self):
+        self.menu.clear_widgets()
+        self.menu_header = Label(text=self.converter.get_text('menu'), size_hint_y=None, height=dp(40))
+        self.menu.add_widget(self.menu_header)
+
+        self.acc = Accordion(orientation='vertical')
+        self.menu.add_widget(self.acc)
+
+        self.settings_item = AccordionItem(title=self.converter.get_text('settings'))
+        self.acc.add_widget(self.settings_item)
+
+        inner = BoxLayout(orientation='vertical', padding=dp(10), spacing=dp(10))
+        self.settings_item.add_widget(inner)
+
+        self.lang_label = Label(text=self.converter.get_text('language'), size_hint_y=None, height=dp(30))
+        inner.add_widget(self.lang_label)
+
+        self.lang_spinner = Spinner(
+            text=self.converter.langs[self.converter.language],
+            values=list(self.converter.langs.values()),
+            size_hint_y=None,
+            height=dp(44)
+        )
+        self.lang_spinner.bind(text=self.converter.on_lang_change)
+        inner.add_widget(self.lang_spinner)
+
+    def update_menu_texts(self):
+        self.menu_header.text = self.converter.get_text('menu')
+        self.settings_item.title = self.converter.get_text('settings')
+        self.lang_label.text = self.converter.get_text('language')
+
+    def open_menu(self, *args):
+        Animation(x=0, d=0.2).start(self.menu)
+        Animation(opacity=1, d=0.2).start(self.overlay)
+        self.overlay.disabled = False
+
+    def close_menu(self, *args):
+        Animation(x=-self.menu.width, d=0.2).start(self.menu)
+        Animation(opacity=0, d=0.2).start(self.overlay)
+        self.overlay.disabled = True
 
 if __name__ == '__main__':
     ConverterApp().run()
