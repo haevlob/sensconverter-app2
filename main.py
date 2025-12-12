@@ -18,7 +18,32 @@ from kivy.animation import Animation
 from kivy.uix.accordion import Accordion, AccordionItem
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle
-import types
+
+class Blocker(Widget):
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            return True
+        return super(Blocker, self).on_touch_down(touch)
+
+class Menu(BoxLayout):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        with self.canvas.before:
+            Color(0.8, 0.8, 0.8, 1)  # gray
+            self.rect = Rectangle(size=self.size, pos=self.pos)
+        self.bind(size=self._update_rect, pos=self._update_rect)
+
+    def _update_rect(self, instance, value):
+        self.rect.pos = instance.pos
+        self.rect.size = instance.size
+
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            for child in reversed(self.children):
+                if child.dispatch('on_touch_down', touch):
+                    return True
+            return True
+        return super(Menu, self).on_touch_down(touch)
 
 class SensitivityConverter(BoxLayout):
     orientation = 'vertical'
@@ -47,10 +72,10 @@ class SensitivityConverter(BoxLayout):
                 'pt': 'Para jogo'
             },
             'accel_title': {
-                'ru': 'Ускорение проведения по горизонтали',
-                'en': 'Horizontal swipe acceleration',
-                'es': 'Aceleración de deslizamiento horizontal',
-                'pt': 'Aceleração de deslize horizontal'
+                'ru': 'Ускорение',
+                'en': 'Acceleration',
+                'es': 'Aceleración',
+                'pt': 'Aceleração'
             },
             'mode': {
                 'ru': 'Режим:',
@@ -95,64 +120,64 @@ class SensitivityConverter(BoxLayout):
                 'pt': 'Selecione jogos diferentes para conversão'
             },
             'general_sens': {
-                'ru': 'Общ. чувс.',
-                'en': 'General sens.',
-                'es': 'Sens. general',
-                'pt': 'Sens. geral'
+                'ru': 'Чувствит',
+                'en': 'Sensitivity',
+                'es': 'Sensibilidad',
+                'pt': 'Sensibilidade'
             },
             '3person': {
-                'ru': '3 лицо',
-                'en': '3rd person',
-                'es': '3ra persona',
-                'pt': '3ª pessoa'
+                'ru': '3-е лицо',
+                'en': 'TPP No Scope',
+                'es': 'PTP sin visor',
+                'pt': '3ª Pessoa'
             },
             '1person': {
-                'ru': '1 лицо',
-                'en': '1st person',
-                'es': '1ra persona',
-                'pt': '1ª pessoa'
+                'ru': '1-е лицо',
+                'en': 'FPP No Scope',
+                'es': 'PPP sin visor',
+                'pt': '1ª Pessoa'
             },
             'col_holo_iron_side': {
                 'ru': 'Кол., голо.,\nмушка, боковой',
-                'en': 'Col., holo.,\niron sight, side',
-                'es': 'Col., holo.,\nmira hierro, lateral',
-                'pt': 'Col., holo.,\nmira ferro, lateral'
+                'en': 'Red Dot,Holo,...',
+                'es': 'Punto Rojo,Holo,…',
+                'pt': 'Ponto Verm., Holo,…'
             },
             'in_scope': {
-                'ru': 'В прицеле',
-                'en': 'In scope',
-                'es': 'En mira',
-                'pt': 'Em mira'
+                'ru': 'С прицелом',
+                'en': 'Scope sensitivity',
+                'es': 'Sens.de la mirilla',
+                'pt': 'Telescópica'
             },
             '3person_dot': {
-                'ru': '3 лицо.',
-                'en': '3rd person.',
-                'es': '3ra persona.',
-                'pt': '3ª pessoa.'
+                'ru': '3-е лицо',
+                'en': 'Third person',
+                'es': 'Tercera persona',
+                'pt': 'Terceira pessoa'
             },
             'standard': {
-                'ru': 'Стандарт',
-                'en': 'Standard',
-                'es': 'Estándar',
-                'pt': 'Padrão'
+                'ru': 'Стандарт (руль)',
+                'en': 'Steering',
+                'es': 'Dirección',
+                'pt': 'Condução'
             },
             'col_holo_aim': {
                 'ru': 'Кол., голо.,\nв реж. прицел.',
-                'en': 'Col., holo.,\nin aim mode',
-                'es': 'Col., holo.,\nen modo mira',
-                'pt': 'Col., holo.,\nem modo mira'
+                'en': 'Red dot,holo,ADS',
+                'es': 'Punto rojo/ holo.,apuntado',
+                'pt': 'Ponto verm./ holo.,mira'
             },
             'tactical': {
                 'ru': 'Тактический',
                 'en': 'Tactical',
-                'es': 'Táctico',
-                'pt': 'Tático'
+                'es': 'Mira táctica',
+                'pt': 'Escopo táctico'
             },
             'sniper': {
                 'ru': 'Снайперский',
                 'en': 'Sniper',
-                'es': 'Francotirador',
-                'pt': 'Sniper'
+                'es': 'Mira de precisión',
+                'pt': 'Escopo do fuzil'
             },
             'settings': {
                 'ru': 'Настройки',
@@ -328,7 +353,7 @@ class SensitivityConverter(BoxLayout):
             self.mode_buttons[mode] = btn
 
         sensor_frame = BoxLayout(orientation='horizontal', size_hint_y=None, height=dp(60))
-        settings_frame.add_widget(sensor_frame)
+                settings_frame.add_widget(sensor_frame)
         self.type_label = Label(text=self.get_text("type"), size_hint_x=None, width=dp(60))
         sensor_frame.add_widget(self.type_label)
         self.sensor_buttons = {}
@@ -366,7 +391,7 @@ class SensitivityConverter(BoxLayout):
         for sensor, btn in self.sensor_buttons.items():
             btn.text = self.get_text('sens' if sensor == 'sensitivity' else 'gyro')
         self.update_ui()
-        
+
     def on_left_game_change(self, value):
         games = {'Standoff 2': 'standoff', 'PUBG Mobile': 'pubg', 'CoD Mobile': 'cod'}
         self.left_game = games[value]
@@ -678,8 +703,8 @@ class SensitivityConverter(BoxLayout):
         if left_game == "pubg" and right_game == "cod" and key == "general_3p":
             pubg_indices = {
                 "general_1p": 1, "col": 2, "2x": 3, "3x": 4, "4x": 5, "6x": 6, "8x": 7
-            }
-            cod_indices = {
+                }
+                        cod_indices = {
                 "general_3p": 8, "general_1p": 9, "col": 10, "2x": 11, "3x": 12, "4x": 13,
                 "6x": 14, "8x": 15, "6x_sniper": 16
             }
@@ -710,7 +735,7 @@ class SensitivityConverter(BoxLayout):
                     upper = source_data[k][list(source_data[k].keys())[row_index + 1]]
                     val = lower + ratio * (upper - lower)
                     ri.text = str(int(round(val)))
-                    
+
         elif left_game == "cod" and right_game == "pubg" and key == "general_3p":
             pubg_indices = {
                 "general_3p": 0, "general_1p": 1, "col": 2, "2x": 3, "3x": 4, "4x": 5, "6x": 6, "8x": 7
@@ -759,7 +784,7 @@ class SensitivityConverter(BoxLayout):
             source_data = self.standoff_pubg_sens if sensor == "sensitivity" else self.standoff_pubg_gyro
             if key == "general_3p":
                 general_standoff = self.invert_interpolate(left_value, source_data, "general_3p", is_standoff_output=True)
-                for lw, k, label in self.left_widgets:
+                for lw, k, lbl in self.left_widgets:
                     if lw != left_input and k in ["general_1p", "col", "2x", "3x", "4x", "6x", "8x"]:
                         pubg_value = self.interpolate_value(general_standoff, source_data, k)
                         lw.text = str(int(round(pubg_value)))
@@ -780,7 +805,7 @@ class SensitivityConverter(BoxLayout):
             source_data = self.standoff_cod_sens if sensor == "sensitivity" else self.standoff_cod_gyro
             if key == "general_3p":
                 general_standoff = self.invert_interpolate(left_value, source_data, "general_3p", is_standoff_output=True)
-                for lw, k, label in self.left_widgets:
+                for lw, k, lbl in self.left_widgets:
                     if lw != left_input and k in ["general_1p", "col", "2x", "3x", "4x", "6x", "8x", "6x_sniper"]:
                         cod_value = self.interpolate_value(general_standoff, source_data, k)
                         lw.text = str(int(round(cod_value)))
@@ -1004,48 +1029,27 @@ class ConverterApp(App):
         self.converter = SensitivityConverter(size_hint=(1, 1), pos=(0, 0))
         root.add_widget(self.converter)
 
-        self.overlay = Widget(size_hint=(1, 1), opacity=0)
-        self.overlay.disabled = True
-        with self.overlay.canvas:
-            Color(rgba=(0, 0, 0, 0.5))
-            self.rect = Rectangle(pos=self.overlay.pos, size=self.overlay.size)
-        self.overlay.bind(pos=self.update_rect, size=self.update_rect)
-        self.overlay.bind(on_touch_down=self.on_overlay_touch_down)
-        def overlay_collide_point(widget, x, y):
-            if widget.opacity == 0 or widget.disabled:
-                return False
-            return widget.x <= x < widget.x + widget.width and widget.y <= y < widget.y + widget.height
-        self.overlay.collide_point = types.MethodType(overlay_collide_point, self.overlay)
-        root.add_widget(self.overlay)
-
-        self.menu = BoxLayout(orientation='vertical', size_hint=(None, None), size=(dp(250), Window.height), pos=(-dp(250), 0))
+        self.menu = Menu(orientation='vertical', size_hint=(None, None), size=(dp(250), Window.height), pos=(-dp(250), 0))
         root.add_widget(self.menu)
 
         self.menu_btn = Button(text='☰', font_size=dp(24), size_hint=(None, None), size=(dp(40), dp(40)), pos=(dp(10), Window.height - dp(50)))
-        self.menu_btn.bind(on_press=self.open_menu)
+        self.menu_btn.bind(on_press=self.toggle_menu)
         root.add_widget(self.menu_btn)
 
         self.build_menu()
         Window.bind(size=self.on_window_resize)
         return root
 
-    def update_rect(self, instance, value):
-        self.rect.pos = instance.pos
-        self.rect.size = instance.size
-
-    def on_overlay_touch_down(self, instance, touch):
-        if self.menu.collide_point(*touch.pos):
-            return False
-        self.close_menu()
-        return True
-
     def on_window_resize(self, instance, value):
         self.menu.height = Window.height
         self.menu.pos = (0 if self.menu.x >= 0 else -self.menu.width, 0)
         self.menu_btn.pos = (dp(10), Window.height - dp(50))
+        if hasattr(self, 'blocker'):
+            self.blocker.pos = (self.menu.width, 0)
+            self.blocker.size = (Window.width - self.menu.width, Window.height)
 
     def build_menu(self):
-        self.menu.clear_widgets()
+                self.menu.clear_widgets()
         self.menu_header = Label(text=self.converter.get_text('menu'), size_hint_y=None, height=dp(40))
         self.menu.add_widget(self.menu_header)
 
@@ -1075,15 +1079,18 @@ class ConverterApp(App):
         self.settings_item.title = self.converter.get_text('settings')
         self.lang_label.text = self.converter.get_text('language')
 
-    def open_menu(self, *args):
-        Animation(x=0, d=0.2).start(self.menu)
-        Animation(opacity=1, d=0.2).start(self.overlay)
-        self.overlay.disabled = False
-
-    def close_menu(self, *args):
-        Animation(x=-self.menu.width, d=0.2).start(self.menu)
-        Animation(opacity=0, d=0.2).start(self.overlay)
-        self.overlay.disabled = True
+    def toggle_menu(self, *args):
+        root = self.root
+        if self.menu.x < 0:
+            Animation(x=0, d=0.2).start(self.menu)
+            self.blocker = Blocker(pos=(dp(250), 0), size=(Window.width - dp(250), Window.height))
+            root.add_widget(self.blocker, index=1)
+            self.menu_btn.text = 'X'
+        else:
+            Animation(x=-dp(250), d=0.2).start(self.menu)
+            root.remove_widget(self.blocker)
+            del self.blocker
+            self.menu_btn.text = 'Х'
 
 if __name__ == '__main__':
     ConverterApp().run()
