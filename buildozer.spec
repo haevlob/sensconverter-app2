@@ -1,45 +1,114 @@
-[app]
+name: Build Kivy App
 
-title = Sensitivity Converter
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
-package.name = sensconverter
-package.domain = org.devon  # изменил на уникальный
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-source.dir = .
-source.include_exts = py,png,jpg,kv,atlas
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-version = 1.0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-# Упрощённые requirements — надёжнее
-requirements = python3,kivy==2.3.0
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            python3-dev \
+            build-essential \
+            libgl1-mesa-dev \
+            libgles2-mesa-dev \
+            libgstreamer1.0-dev \
+            gstreamer1.0-plugins-base \
+            gstreamer1.0-plugins-good \
+            gstreamer1.0-plugins-bad \
+            gstreamer1.0-plugins-ugly \
+            gstreamer1.0-libav \
+            libsdl2-dev \
+            libmtdev-dev \
+            libxrandr-dev \
+            libxinerama-dev \
+            libxcursor-dev \
+            libxi-dev
 
-# Иконка (положи icon.png в корень проекта)
-icon.filename = icon.png
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
 
-# presplash.filename = presplash.png  # опционально
+      - name: Install Python dependencies
+        run: |
+          pip install kivy
 
-orientation = portrait
-fullscreen = 1
+      - name: Syntax check
+        run: python -m py_compile main.py
 
-# Убрал INTERNET — не нужен
-# android.permissions = 
+      - name: Run basic import test
+        run: python - << 'EOF'
+import kivy
+print('Kivy version:', kivy.__version__)
+EOF
+name: Build Kivy App
 
-android.api = 34
-android.minapi = 24
-android.accept_sdk_license = True
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
-p4a.bootstrap = sdl2
-android.debug_artifact = apk
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-# Убрал старую версию NDK — Buildozer скачает свежую
-# android.ndk = 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-android.archs = arm64-v8a, armeabi-v7a
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-author = Devon
-description = Конвертер чувствительности между Standoff 2, PUBG Mobile и CoD Mobile
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            python3-dev \
+            build-essential \
+            libgl1-mesa-dev \
+            libgles2-mesa-dev \
+            libgstreamer1.0-dev \
+            gstreamer1.0-plugins-base \
+            gstreamer1.0-plugins-good \
+            gstreamer1.0-plugins-bad \
+            gstreamer1.0-plugins-ugly \
+            gstreamer1.0-libav \
+            libsdl2-dev \
+            libmtdev-dev \
+            libxrandr-dev \
+            libxinerama-dev \
+            libxcursor-dev \
+            libxi-dev
 
-[buildozer]
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
 
-log_level = 2
-warn_on_root = 1
+      - name: Install Python dependencies
+        run: |
+          pip install kivy
+
+      - name: Syntax check
+        run: python -m py_compile main.py
+
+      - name: Run basic import test
+        run: python - << 'EOF'
+import kivy
+print('Kivy version:', kivy.__version__)
+EOF
