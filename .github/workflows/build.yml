@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'  # Совместимо с Buildozer (было 8, но 17 работает лучше)
+          java-version: '17'  # Совместимо с Buildozer
 
       - name: Install dependencies
         run: |
@@ -34,11 +34,17 @@ jobs:
           key: \( {{ runner.os }}-buildozer-global- \){{ hashFiles('buildozer.spec') }}
           path: .buildozer
 
+      - name: Accept Android SDK licenses
+        run: |
+          mkdir -p ~/.android
+          echo "y" | sdkmanager --licenses || true  # Автоматическое "y" для всех лицензий
+          yes | sdkmanager --licenses  # Альтернатива с yes
+
       - name: Build APK
-        run: buildozer -v android debug  # Или 'release' для signed APK
+        run: buildozer -v android debug  # Verbose для детальных логов
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: sensitivity-converter-apk
-          path: bin/*.apk  # Путь к APK (в bin/ в корне проекта)
+          path: bin/*.apk  # Путь к APK
