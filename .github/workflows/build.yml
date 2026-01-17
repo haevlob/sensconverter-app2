@@ -41,7 +41,7 @@ jobs:
       - name: Install Cython and Buildozer
         run: |
           pip3 install --user --upgrade Cython==0.29.33 virtualenv
-          pip3 install --user --upgrade buildozer
+          pip3 install --user --upgrade buildozer==1.5.0  # Older stable version
 
       - name: Cache Buildozer global directory
         uses: actions/cache@v4
