@@ -1,114 +1,43 @@
-name: Build Kivy App
+[app]
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+# Название приложения (отображается в лаунчере)
+title = Sensitivity Converter
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# Версия приложения
+version = 1.0
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+# Пакетное имя (должно быть уникальным, например, для Google Play)
+package.name = sensitivityconverter
+package.domain = com.devon
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+# Директория с исходным кодом (текущая директория, где main.py)
+source.dir = .
 
-      - name: Install system dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y \
-            python3-dev \
-            build-essential \
-            libgl1-mesa-dev \
-            libgles2-mesa-dev \
-            libgstreamer1.0-dev \
-            gstreamer1.0-plugins-base \
-            gstreamer1.0-plugins-good \
-            gstreamer1.0-plugins-bad \
-            gstreamer1.0-plugins-ugly \
-            gstreamer1.0-libav \
-            libsdl2-dev \
-            libmtdev-dev \
-            libxrandr-dev \
-            libxinerama-dev \
-            libxcursor-dev \
-            libxi-dev
+# Расширения файлов для включения в APK
+source.include_exts = py,png,jpg,kv,atlas
 
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
+# Требуемые зависимости (Python 3 и Kivy — достаточно для вашего кода)
+requirements = python3,kivy
 
-      - name: Install Python dependencies
-        run: |
-          pip install kivy
+# Ориентация экрана (portrait — вертикальная, как в вашем коде с fullscreen)
+orientation = portrait
 
-      - name: Syntax check
-        run: python -m py_compile main.py
+# Полноэкранный режим (авто, как в коде)
+fullscreen = auto
 
-      - name: Run basic import test
-        run: python - << 'EOF'
-import kivy
-print('Kivy version:', kivy.__version__)
-EOF
-name: Build Kivy App
+# Иконка приложения (если есть файл icon.png в корне, укажите путь)
+# icon.filename = %(source.dir)s/icon.png
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+# Splash-экран (если есть, укажите путь)
+# presplash.filename = %(source.dir)s/presplash.png
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# Разрешения Android (вашему приложению не нужны специальные, но добавьте, если потребуется, например, для интернета)
+# android.permissions = INTERNET
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+[buildozer]
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+# Уровень логирования (2 — детальный, полезно для отладки)
+log_level = 2
 
-      - name: Install system dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y \
-            python3-dev \
-            build-essential \
-            libgl1-mesa-dev \
-            libgles2-mesa-dev \
-            libgstreamer1.0-dev \
-            gstreamer1.0-plugins-base \
-            gstreamer1.0-plugins-good \
-            gstreamer1.0-plugins-bad \
-            gstreamer1.0-plugins-ugly \
-            gstreamer1.0-libav \
-            libsdl2-dev \
-            libmtdev-dev \
-            libxrandr-dev \
-            libxinerama-dev \
-            libxcursor-dev \
-            libxi-dev
-
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
-
-      - name: Install Python dependencies
-        run: |
-          pip install kivy
-
-      - name: Syntax check
-        run: python -m py_compile main.py
-
-      - name: Run basic import test
-        run: python - << 'EOF'
-import kivy
-print('Kivy version:', kivy.__version__)
-EOF
+# Предупреждать, если запускается от root
+warn_on_root = 1
