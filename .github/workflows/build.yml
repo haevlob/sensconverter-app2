@@ -22,11 +22,16 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install Android Command Line Tools
-        run: |
-          sdkmanager "cmdline-tools;latest"
+        run: sdkmanager "cmdline-tools;latest"
 
       - name: Accept Android SDK licenses
         run: yes | sdkmanager --licenses
+
+      - name: Install specific SDK components
+        run: |
+          sdkmanager "build-tools;33.0.2"
+          sdkmanager "platforms;android-33"
+          sdkmanager "platform-tools"
 
       - name: Install dependencies
         run: |
