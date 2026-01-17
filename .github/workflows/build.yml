@@ -3,24 +3,42 @@ name: Build APK
 on:
   push:
     branches:
-      - main  # Сработает на push в main; измените на вашу ветку
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4  # Скачивает код репозитория
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          command: buildozer android debug  # Команда сборки (debug — для тестирования)
-          workdir: .  # Рабочая директория (корень проекта)
-          buildozer_version: stable  # Версия Buildozer
+          distribution: 'temurin'
+          java-version: '17'  # Совместимо с Buildozer (было 8, но 17 работает лучше)
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential ccache git libncurses5-dev libssl-dev libsqlite3-dev libreadline-dev libgmp3-dev libmpfr-dev libmpc-dev zlib1g-dev unzip wget python3-pip python3-venv
+
+      - name: Install Cython and Buildozer
+        run: |
+          pip3 install --user --upgrade Cython==0.29.33 virtualenv  # Фикс для совместимости
+          pip3 install --user --upgrade buildozer
+
+      - name: Cache Buildozer global directory
+        uses: actions/cache@v4
+        with:
+          key: \( {{ runner.os }}-buildozer-global- \){{ hashFiles('buildozer.spec') }}
+          path: .buildozer
+
+      - name: Build APK
+        run: buildozer -v android debug  # Или 'release' для signed APK
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: sensitivity-converter-apk  # Название артефакта
-          path: ${{ steps.buildozer.outputs.filename }}  # Путь к собранному APK
+          name: sensitivity-converter-apk
+          path: bin/*.apk  # Путь к APK (в bin/ в корне проекта)
