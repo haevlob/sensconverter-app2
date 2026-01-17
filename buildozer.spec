@@ -31,8 +31,18 @@ fullscreen = auto
 # Splash-экран (если есть, укажите путь)
 # presplash.filename = %(source.dir)s/presplash.png
 
-# Разрешения Android (вашему приложению не нужны специальные, но добавьте, если потребуется, например, для интернета)
+# Разрешения Android (вашему приложению не нужны дополнительные, но добавьте, если потребуется)
 # android.permissions = INTERNET
+
+# Автоматическое принятие лицензии Android SDK
+android.accept_sdklicense = True
+
+# Фиксированные версии для стабильности
+android.sdk = 33
+android.minapi = 21
+android.targetapi = 33
+android.ndk = 25c
+android.ndk_api = 21
 
 [buildozer]
 
