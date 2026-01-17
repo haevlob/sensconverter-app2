@@ -16,7 +16,10 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'  # Совместимо с Buildozer
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Install dependencies
         run: |
@@ -25,7 +28,7 @@ jobs:
 
       - name: Install Cython and Buildozer
         run: |
-          pip3 install --user --upgrade Cython==0.29.33 virtualenv  # Фикс для совместимости
+          pip3 install --user --upgrade Cython==0.29.33 virtualenv
           pip3 install --user --upgrade buildozer
 
       - name: Cache Buildozer global directory
@@ -34,17 +37,11 @@ jobs:
           key: \( {{ runner.os }}-buildozer-global- \){{ hashFiles('buildozer.spec') }}
           path: .buildozer
 
-      - name: Accept Android SDK licenses
-        run: |
-          mkdir -p ~/.android
-          echo "y" | sdkmanager --licenses || true  # Автоматическое "y" для всех лицензий
-          yes | sdkmanager --licenses  # Альтернатива с yes
-
       - name: Build APK
-        run: buildozer -v android debug  # Verbose для детальных логов
+        run: buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: sensitivity-converter-apk
-          path: bin/*.apk  # Путь к APK
+          path: bin/*.apk
